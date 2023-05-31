@@ -1,0 +1,16 @@
+name: example workflow jsdocs
+
+on: 
+  push: 
+  pull_request:
+  workflow_dispatch:
+  
+jobs: 
+  generate: 
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: andstor/jsdoc-action@v1.2.1
+      - with: 
+          source_dir: ./src
+          recurse: true
+          output_dir: ./out
