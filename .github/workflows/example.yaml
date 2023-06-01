@@ -21,8 +21,5 @@ jobs:
       - name: Commit JSDOCS
         uses: EndBug/add-and-commit@v9
         with:
-          author_name: GitHub Actions
-          author_email: noreply@github.com
           message: 'Generated JSDocs'
           add: 'jsdocs/*'
-
