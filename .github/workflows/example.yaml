@@ -2,26 +2,46 @@ name: example workflow jsdocs
 
 on:
   push:
-    
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
+permissions: write-all
 
-      - name: Build
+jobs: 
+  jsdocs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build JSDOCS
         uses: andstor/jsdoc-action@v1
         with:
-          source_dir: .src
-          output_dir: .docs
-          template: minami
+          source_dir: ./assets/scripts
+          recurse: true
+          output_dir: ./jsdocs
           front_page: README.md
-          
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+          template: clean-jsdoc-theme
+      - name: Commit JSDOCS
+        uses: EndBug/add-and-commit@v9
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .docs
+          author_name: GitHub Actions
+          author_email: noreply@github.com
+          message: 'Generated JSDocs'
+          add: 'jsdocs/*'
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with: 
+        ref: gh-pages
+    - name: Setup Pages
+      uses: actions/configure-pages@v3
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v1
+      with:
+        path: '.'
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v2
+
